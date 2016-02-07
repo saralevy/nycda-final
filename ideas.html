@@ -1,0 +1,163 @@
+
+
+Twitter
+http://www.sitepoint.com/building-twitter-app-using-angularjs/
+https://blog.twitter.com/2014/rendering-tweets-with-angularjs-and-nodejs ***
+
+params = {
+  screen_name: req.params.user, // the user id passed in as part of the route
+  count: TWEET_COUNT // how many tweets to return
+};
+ 
+// request data 
+twitter.get(USER_TIMELINE_URL, params, function (err, data, resp) {
+ 
+  tweets = data;
+ 
+  var i = 0, len = tweets.length;
+ 
+  for(i; i<len; i++) {
+    getOEmbed(tweets[i]);
+  }
+});
+
+For each Tweet in the response, the HTML required to create embedded Tweets is requested from the statuses/oembed endpoint using the Tweet ID. The Tweet data is added to a new property called oEmbed on each Tweet. In a production environment, this data should be cached.
+
+function getOEmbed (tweet) {
+ 
+  // oEmbed request params
+  var params = {
+    "id": tweet.id_str,
+    "maxwidth": MAX_WIDTH,
+    "hide_thread": true,
+    "omit_script": true
+  };
+ 
+  // request data 
+  twitter.get(OEMBED_URL, params, function (err, data, resp) {
+ 
+    tweet.oEmbed = data;
+    oEmbedTweets.push(tweet);
+ 
+    // do we have oEmbed HTML for all Tweets?
+    if (oEmbedTweets.length == tweets.length) {
+      res.setHeader('Content-Type', 'application/json');
+      res.send(oEmbedTweets);
+    }
+  });
+}
+
+This data is exposed by an endpoint provided by the Node.js app and can be consumed by Angular on the front end. Angular makes it easy to render JSON data in the DOM. To get started with our Angular app, we will now create a controller and request the Tweets with a resource.
+
+function getTweets (paging) {
+ 
+  var params = {
+    action: 'user_timeline',
+    user: $scope.username
+  };
+ 
+  // create Tweet data resource
+  $scope.tweets = $resource('/tweets/:action/:user', params);
+ 
+  // GET request using the resource
+  $scope.tweets.query( { }, function (res) {
+ 
+    $scope.tweetsResult = $scope.tweetsResult.concat(res);
+ 
+    // render tweets with widgets.js
+    $timeout(function () {
+      twttr.widgets.load();
+    }, 30);
+  });
+}
+
+The data is then assigned to the $scope.tweetsResult. The Angular view will automatically render this data using data-binding defined in the HTML template. In the HTML of the app, use the ngRepeat directive to loop through all Tweets in the model. Use the ngBindHtml directive to render the oEmbed HTML in each Tweet object. The ngBindHtml directive uses Angular’s default settings to sanitize HTML in a model. A delayed call to twttr.widgets.load()provided by widgets.js will render the embedded Tweets added to the DOM.
+
+<div ng-repeat="tweet in tweetsResult" class="tweet-item">
+ 
+  <!-- sanitized HTML binding -->
+  <div ng-bind-html="tweet.oEmbed.html"></div>
+ 
+  <!-- binding to Tweet source property -->
+  <div class="tweet-details">
+    Source: <span ng-bind-html="tweet.source"></span>
+ 
+    <!-- play around with rendering different Tweet properties -->
+    <!-- <p>{{tweet.user.screen_name}}</p> -->
+    <!-- <p>{{tweet.text}}</p> -->
+  </div>
+</div>
+
+The Tweet object also has fully-hydrated user objects and an entities property that contains information about attached photos, links and @mentions. Play around with the Twitter data by binding it to different properties of the Tweet object in the HTML.
+
+While this example only touches on the data-binding aspect, Angular offers much more. This includes dependency injection and directives, both of which can help you create custom HTML elements. Download the full source code on GitHub, as it demonstrates two-way data binding with a form as well as working with Twitter timeline data.
+
+For more information on the oEmbed API, check out our pro tip post.
+
+https://leanpub.com/recipes-with-angular-js/read
+
+
+
+
+
+The twitter no more supports the way blog explained to query. Twitter changed it's API and now you need to authenticate/authorize for every such request. There is working example present here
+
+    https://blog.twitter.com/2014/rendering-tweets-with-angularjs-and-nodejs
+
+This will require your app and secret keys and access and secret keys. this will allow you to fetch results. I hope this will help. There is good information about this is available here also
+
+    https://beautifulbytes.wordpress.com/2013/06/18/oauth2-with-angularjs-to-access-twitter/
+
+
+
+news feed
+http://www.jdev.it/a-very-simple-rss-reader-with-angularjs-and-google-feed-api/
+ 
+<body ng-controller='FeedCtrl'>
+ 
+<div ng-repeat="feed in feeds | orderBy:'title'">
+  <h2><a href="{{feed.link}}" target="_blank">{{feed.title}}</a></h2>
+  <p><span ng-repeat="item in feed.entries">
+    <a href="{{item.link}}" target="_blank">{{item.title}}</a> (<span>{{item.publishedDate | date:'d-MM-yyyy HH:mm'}}</span>)<br />
+  </span></p>
+</div>
+ 
+<script src="feeds.js"></script>
+  
+</body>
+
+
+
+
+var feeds = [];
+  
+angular.module('feedModule', ['ngResource'])
+  .factory('FeedLoader', function ($resource) {
+    return $resource('http://ajax.googleapis.com/ajax/services/feed/load', {}, {
+      fetch: { method: 'JSONP', params: {v: '1.0', callback: 'JSON_CALLBACK'} }
+    });
+  })
+  .service('FeedList', function ($rootScope, FeedLoader) {
+    this.get = function() {
+      var feedSources = [
+        {title: 'Slashdot', url: 'http://rss.slashdot.org/Slashdot/slashdot'},
+        {title: 'Tweakers', url: 'http://feeds.feedburner.com/tweakers/mixed'},
+        {title: 'Wired', url: 'http://feeds.wired.com/wired/index'},
+      ];
+      if (feeds.length === 0) {
+        for (var i=0; i<feedSources.length; i++) {
+          FeedLoader.fetch({q: feedSources[i].url, num: 10}, {}, function (data) {
+            var feed = data.responseData.feed;
+            feeds.push(feed);
+          });
+        }
+      }
+      return feeds;
+    };
+  })
+  .controller('FeedCtrl', function ($scope, FeedList) {
+    $scope.feeds = FeedList.get();
+    $scope.$on('FeedList', function (event, data) {
+      $scope.feeds = data;
+    });
+  });

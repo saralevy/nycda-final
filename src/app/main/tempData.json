@@ -1,0 +1,11 @@
+[
+  {      
+    "name": "Apple Inc.",
+    "price": "94.480003",
+    "symbol": "AAPL",
+    "ts": "1454446800",
+    "type": "equity",
+    "utctime": "2016-02-02T21:00:00+0000",
+    "volume": "37357215"
+  }
+]

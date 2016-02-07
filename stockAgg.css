@@ -1,0 +1,110 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+body{
+    color: #000022;
+    font-family: serif, sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+#stockTitle {
+    display: block;
+    text-align: center;
+    background-color:  #3066BE;
+    color:white;
+    font-size: 2.0em;
+    font-weight: bolder;
+    padding: 1%;
+    margin: 0;
+}
+#inputForm {
+    background: #80DED9;
+    color: #3066BE;
+    display: inline-block;
+    padding: 2%;
+    display: block;
+    text-align: center;
+}
+#stockSources {
+    font-size: 1.2em;
+    display: inline-block;
+    padding: 0;
+    margin-left: 5%;
+}
+#stockTicker {
+    font-size: 1.2em;
+    display: inline-block;
+    margin-left: 2%;
+}
+#ticker{
+    background: #AED4E6;
+    padding: 1%;
+    font-size: 1.0;
+    display: block;
+}
+#googleNews{
+    background: #1AC8ED;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    width: 65%;
+    float: left;
+}
+#recentTweets{
+    background: #83ACEF;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    width: 35%;
+}
+.stockPrice {
+    padding-right: 3px;
+    display: inline-flex;
+}
+#about {
+    text-align: center;
+    padding: 10%;
+    color: white;
+    background-color: #3066BE;
+    display: block;
+    text-align: center;
+}
+#about a {
+    text-decoration: none;
+    color: #80DED9;
+    font-weight: bolder;
+}
+#tweetANDnews {
+    display: block;
+}
+#contact {
+    background-color: #3066BE;
+    text-align: center;
+    padding: 10%;
+    color: white;
+}
+#stockAggMenu {
+    display: block;
+    background-color: #3066BE;
+    color: white;
+    font-weight: bold;
+}
+#stockAggMenu ul {
+    margin: 0;
+}
+#stockAggMenu li {
+    display: inline-block;
+    background-color: #3066BE;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0 2%;
+}
+#stockAggMenu li a {
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    padding: 0 2%;
+    margin: 1% 0;
+}

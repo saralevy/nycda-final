@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Stock Aggregator</title>
+<link rel="stylesheet" href="stockAgg.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.js"></script>
+<script src="services.js" ></script>
+<script src="app.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="MainCtrl as ctrl">
+    <div id="stockTitle">Stock Aggregator</div>
+
+    <div id="stockAggMenu">
+        <ul>
+            <li><a href="#" ui-sref="main">Main</a></li>
+            <li><a href="#" ui-sref="about">About</a></li>
+            <li><a href="#" ui-sref="contact">Contact</a></li>
+        </ul>
+    </div>
+
+    <div id="inputForm">
+        <div id="stockTicker">Enter Stock Ticker: </div>
+        <input type="text" ng-model="ctrl.stock"/>
+
+        <div id="stockSources">Select Sources: 
+        <input  type="checkbox" 
+                ng-model="ctrl.researchSites.ticker" ng-click="ctrl.getTickerTape()"/>Stock ticker
+        <input  type="checkbox" 
+                ng-model="ctrl.researchSites.googleNews" ng-click="ctrl.getNews()"/>Google News
+        <input  type="checkbox" 
+                ng-model="ctrl.researchSites.tweets" ng-click="ctrl.getTweets()"/>Recent Tweets
+        </div>
+    </div>
+
+    <div id="ticker" ng-if="ctrl.researchSites.ticker">
+        <div ng-repeat="stock in ctrl.tickerValue">
+            <label class="stockPrice" ng-bind="stock.price"></label>
+        </div>
+    </div> 
+
+    <div id="tweetANDnews">
+        <div id="recentTweets" ng-if="ctrl.researchSites.tweets">
+            <h4>TWEETS</h4>
+            <!--<div ng-repeat="tweet in ctrl.twitterValue">
+                <label ng-bind="tweet"></label>
+            </div>-->
+        </div>
+
+        <div id="googleNews" ng-if="ctrl.researchSites.googleNews">
+            <h4>NEWS</h4>
+        </div>
+    </div>
+
+    <div ui-view></div>
+
+</body>
+</html>
